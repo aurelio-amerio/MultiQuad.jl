@@ -12,6 +12,8 @@ using MultiQuad, Test, Unitful
         res,
         atol = rtol * 1e2,
     )
+    @test typeof(quad(func1, xmin, xmax, rtol = rtol, method=:vegas)[1])==Float64
+    @test typeof(quad(func1, xmin, xmax, rtol = rtol, method=:suave)[1])==Float64
 
     xmin2 = 0 * u"m"
     xmax2 = 4 * u"m"
@@ -22,6 +24,8 @@ using MultiQuad, Test, Unitful
         res2 * u"m^3",
         atol = rtol * 1e2 * u"m^3",
     )
+    @test typeof(quad(func2, xmin2, xmax2, rtol = rtol, method=:vegas)[1])==typeof(1.0u"m^3")
+    @test typeof(quad(func2, xmin2, xmax2, rtol = rtol, method=:suave)[1])==typeof(1.0u"m^3")
 
     @test_throws ErrorException quad(func1, 0, 4, method = :none)
 end
@@ -42,6 +46,9 @@ end
         res1,
         atol = rtol * 1e2,
     )
+    @test typeof(dblquad(func1, xmin, xmax, ymin, ymax, rtol = rtol, method=:vegas)[1])==Float64
+    @test typeof(dblquad(func1, xmin, xmax, ymin, ymax, rtol = rtol, method=:suave)[1])==Float64
+    @test typeof(dblquad(func1, xmin, xmax, ymin, ymax, rtol = rtol, method=:divonne)[1])==Float64
 
     xmin2 = 0 * u"m"
     xmax2 = 4 * u"m"
@@ -54,6 +61,9 @@ end
         res1 * u"m^10",
         atol = rtol * 1e2 * u"m^10",
     )
+    @test typeof(dblquad(func2, xmin2, xmax2, ymin2, ymax2, rtol = rtol, method=:vegas)[1])==typeof(1.0u"m^10")
+    @test typeof(dblquad(func2, xmin2, xmax2, ymin2, ymax2, rtol = rtol, method=:suave)[1])==typeof(1.0u"m^10")
+    @test typeof(dblquad(func2, xmin2, xmax2, ymin2, ymax2, rtol = rtol, method=:divonne)[1])==typeof(1.0u"m^10")
 
     @test_throws ErrorException dblquad(
         func1,
@@ -83,6 +93,9 @@ end
         res,
         atol = rtol * 1e2,
     )
+    @test typeof(tplquad(func1, xmin, xmax, ymin, ymax, zmin, zmax, rtol = rtol, method=:vegas)[1])==Float64
+    @test typeof(tplquad(func1, xmin, xmax, ymin, ymax, zmin, zmax, rtol = rtol, method=:suave)[1])==Float64
+    @test typeof(tplquad(func1, xmin, xmax, ymin, ymax, zmin, zmax, rtol = rtol, method=:divonne)[1])==Float64
 
     xmin2 = 0 * u"m"
     xmax2 = 4 * u"m"
@@ -97,4 +110,9 @@ end
         res * u"m^10",
         atol = rtol * 1e2 * u"m^10",
     )
+    @test typeof(tplquad(func2, xmin2, xmax2, ymin2, ymax2, zmin2, zmax2, rtol = rtol, method=:vegas)[1])==typeof(1.0u"m^10")
+    @test typeof(tplquad(func2, xmin2, xmax2, ymin2, ymax2, zmin2, zmax2, rtol = rtol, method=:suave)[1])==typeof(1.0u"m^10")
+    @test typeof(tplquad(func2, xmin2, xmax2, ymin2, ymax2, zmin2, zmax2, rtol = rtol, method=:divonne)[1])==typeof(1.0u"m^10")
+
+    @test_throws ErrorException tplquad(func2, xmin2, xmax2, ymin2, ymax2, zmin2, zmax2, rtol = rtol. method=:none)[1]
 end
