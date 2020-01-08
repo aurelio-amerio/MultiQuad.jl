@@ -13,7 +13,7 @@ See [QuadGK](https://github.com/JuliaMath/QuadGK.jl) and [Cuba.jl](https://giord
 # Examples
 ```jldoctest
 func(x) = x^2*exp(-x)
-quad(func, 0, 4)
+integral, error = quad(func, 0, 4)
 ```
 
 `quad` can handle units of measurement through the [`Unitful`](https://github.com/PainterQubits/Unitful.jl) package:
@@ -22,7 +22,7 @@ quad(func, 0, 4)
 using Unitful
 
 func(x) = x^2
-quad(func, 1u"m", 5u"m")
+integral, error = quad(func, 1u"m", 5u"m")
 ```
 """
 function quad(arg::Function, x1, x2; method = :quadgk, kwargs...)
@@ -68,7 +68,7 @@ See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available 
 # Examples
 ```jldoctest
 func(y,x) = sin(x)*y^2
-dblquad(func, 1, 2, y->0, y->y^2, rtol=1e-9)
+integral, error = dblquad(func, 1, 2, x->0, x->x^2, rtol=1e-9)
 ```
 
 `dblquad` can handle units of measurement through the [`Unitful`](https://github.com/PainterQubits/Unitful.jl) package:
@@ -76,8 +76,8 @@ dblquad(func, 1, 2, y->0, y->y^2, rtol=1e-9)
 ```jldoctest
 using Unitful
 
-func(y,x) = sin(x)*y^2
-dblquad(func, 1u"m", 2u"m", y->0, y->y^2, rtol=1e-9)
+func(y,x) = x*y^2
+integral, error = dblquad(func, 1u"m", 2u"m", x->0u"m^2", x->x^2, rtol=1e-9)
 ```
 """
 function dblquad(
@@ -132,7 +132,7 @@ See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available 
 # Examples
 ```jldoctest
 func(z,y,x) = sin(z)*y*x
-tplquad(func2, 0, 4, x->x, x->x^2, (x,y)->2, (x,y)->3*x)
+integral, error = tplquad(func, 0, 4, x->x, x->x^2, (x,y)->2, (x,y)->3*x)
 ```
 
 `tplquad` can handle units of measurement through the [`Unitful`](https://github.com/PainterQubits/Unitful.jl) package:
@@ -141,7 +141,7 @@ tplquad(func2, 0, 4, x->x, x->x^2, (x,y)->2, (x,y)->3*x)
 using Unitful
 
 func(z,y,x) = sin(z)*y*x
-tplquad(func, 0u"m", 4u"m", x->0u"m^2", x->x^2, (x,y)->0, (x,y)->3)
+integral, error = tplquad(func, 0u"m", 4u"m", x->0u"m^2", x->x^2, (x,y)->0, (x,y)->3)
 ```
 """
 function tplquad(
