@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/aurelio-amerio/MultiQuad.jl.svg?branch=master)](https://travis-ci.com/aurelio-amerio/MultiQuad.jl)
 [![Coverage Status](https://coveralls.io/repos/github/aurelio-amerio/MultiQuad.jl/badge.svg?branch=master)](https://coveralls.io/github/aurelio-amerio/MultiQuad.jl?branch=master)
-[![codecov.io](https://codecov.io/github/aurelio-amerio/MultiQuad.jl/coverage.svg?branch=master)](https://codecov.io/github/aurelio-amerio/MultiQuad.jl?branch=master)
+[![codecov.io](https://codecov.io/gh/aurelio-amerio/MultiQuad.jl/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/aurelio-amerio/MultiQuad.jl?branch=master)
 
 # MultiQuad.jl
 **MultiQuad.jl** is a convenient interface to perform 1D, 2D and 3D numerical integrations.
@@ -43,7 +43,7 @@ quad(func, 0, 4)
 
 ### Example 2
 
-It is possible to compute integrals with unit of measurement using `Unitful`. 
+It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
@@ -91,9 +91,9 @@ func(y,x) = sin(x)*y^2
 integral, error = dblquad(func, 1, 2, x->0, x->x^2, rtol=1e-9)
 ```
 
-### Example 2 
+### Example 2
 
-It is possible to compute integrals with unit of measurement using `Unitful`. 
+It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
@@ -143,7 +143,7 @@ integral, error = tplquad(func, 0, 4, x->x, x->x^2, (x,y)->2, (x,y)->3*x)
 
 ### Example 2
 
-It is possible to compute integrals with unit of measurement using `Unitful`. 
+It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
@@ -156,4 +156,3 @@ using Unitful
 func(z,y,x) = sin(z)*y*x
 integral, error = tplquad(func, 0u"m", 4u"m", x->0u"m^2", x->x^2, (x,y)->0, (x,y)->3)
 ```
-
