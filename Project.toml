@@ -1,6 +1,6 @@
 name = "MultiQuad"
 uuid = "8fca5bbe-a785-4bb7-9793-c0c8ddca5d4b"
-authors = ["Aurelio Amerio <aurelio.amerio@edu.unito.it>"]
+authors = ["Aurelio Amerio <aure.amerio@gmail.com>"]
 version = "1.0.0"
 
 [deps]
