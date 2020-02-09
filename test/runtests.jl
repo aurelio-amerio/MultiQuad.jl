@@ -58,8 +58,26 @@ end
 
     func1(y, x) = y * x^3
     res1 = 241664 / 5
-    int1, err1 = dblquad(func1, xmin, xmax, ymin, ymax, rtol = rtol)
+    int1, err1 = dblquad(
+        func1,
+        xmin,
+        xmax,
+        ymin,
+        ymax,
+        rtol = rtol,
+        method = :cuhre,
+    )
+    int1b, err1b = dblquad(
+        func1,
+        xmin,
+        xmax,
+        ymin,
+        ymax,
+        rtol = rtol,
+        method = :hcubature,
+    )
     @test isapprox(int1, res1, atol = err1)
+    @test isapprox(int1b, res1, atol = err1b)
     @test typeof(dblquad(
         func1,
         xmin,
@@ -95,8 +113,18 @@ end
     func2(y, x) = y * x^3
 
     int2, err2 = dblquad(func2, xmin2, xmax2, ymin2, ymax2, rtol = rtol)
+    int2b, err2b = dblquad(
+        func2,
+        xmin2,
+        xmax2,
+        ymin2,
+        ymax2,
+        rtol = rtol,
+        method = :hcubature,
+    )
 
     @test isapprox(int2, res1 * u"m^10", atol = err2)
+    @test isapprox(int2b, res1 * u"m^10", atol = err2b)
     @test typeof(dblquad(
         func2,
         xmin2,
@@ -149,7 +177,19 @@ end
     func1(z, y, x) = y * x^3 * sin(z)
     res = 241664 / 5 * (cos(3) - cos(4))
     int1, err1 = tplquad(func1, xmin, xmax, ymin, ymax, zmin, zmax, rtol = rtol)
+    int1b, err1b = tplquad(
+        func1,
+        xmin,
+        xmax,
+        ymin,
+        ymax,
+        zmin,
+        zmax,
+        rtol = rtol,
+        method = :hcubature,
+    )
     @test isapprox(int1, res, atol = err1)
+    @test isapprox(int1b, res, atol = err1b)
     @test typeof(tplquad(
         func1,
         xmin,
@@ -202,7 +242,19 @@ end
         zmax2,
         rtol = rtol,
     )
+    int2b, err2b = tplquad(
+        func2,
+        xmin2,
+        xmax2,
+        ymin2,
+        ymax2,
+        zmin2,
+        zmax2,
+        rtol = rtol,
+        method = :hcubature,
+    )
     @test isapprox(int2, res * u"m^10", atol = err2)
+    @test isapprox(int2b, res * u"m^10", atol = err2b)
     @test typeof(tplquad(
         func2,
         xmin2,
