@@ -1,6 +1,6 @@
 module MultiQuad
 
-using QuadGK, Cuba, Unitful
+using QuadGK, Cuba, HCubature, Unitful
 
 export quad, dblquad, tplquad
 
@@ -8,6 +8,12 @@ export quad, dblquad, tplquad
     quad(arg::Function, x1, x2; method = :quadgk, kwargs...)
 
 Performs the integral ``\int_{x1}^{x2}f(x)dx``
+
+Available integration methods:
+- `:suave`
+- `:vegas`
+- `:quadgk`
+
 See [QuadGK](https://github.com/JuliaMath/QuadGK.jl) and [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available keyword arguments.
 
 # Examples
@@ -63,7 +69,16 @@ end
     dblquad(arg::Function, x1, x2, y1::Function, y2::Function; method = :cuhre, kwargs...)
 
 Performs the integral ``\int_{x1}^{x2}\int_{y1(x)}^{y2(x)}f(y,x)dydx``
-See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available keyword arguments.
+
+Available integration methods:
+- `:cuhre`
+- `:divonne`
+- `:suave`
+- `:vegas`
+- `:hcubature`
+
+See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available keyword arguments fro the `:cuhre`, `:divonne`, `:suave` and `:vegas` methods.
+See [HCubature](https://github.com/stevengj/HCubature.jl) for all the available keywords for the `:hcubature` method.
 
 # Examples
 ```jldoctest
@@ -98,6 +113,8 @@ function dblquad(
         integrate = suave
     elseif method == :vegas
         integrate = vegas
+    elseif method == :hcubature
+        integrate = hcubature
     else
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
@@ -110,11 +127,21 @@ function dblquad(
 
     arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))::Float64
 
-    function integrand(x, f)
-        f[1] = arg2(x[1], x[2])
-    end
+    if method == :hcubature
+        function integrand(arr)
+            return arg2(arr[1], arr[2])
+        end
 
-    result, err = integrate(integrand, 2, 1; kwargs...)
+        min_arr = [0, 0]
+        max_arr = [1, 1]
+        result, err = integrate(integrand, min_arr, max_arr; kwargs...)
+    else
+        function integrand2(x, f)
+            f[1] = arg2(x[1], x[2])
+        end
+
+        result, err = integrate(integrand2, 2, 1; kwargs...)
+    end
 
     if units == Unitful.NoUnits
         return result[1], err[1]
@@ -127,7 +154,16 @@ end
     tplquad(arg::Function, x1, x2, y1::Function, y2::Function, z1::Function, z2::Function; method = :cuhre, kwargs...)
 
 Performs the integral ``\int_{x1}^{x2}\int_{y1(x)}^{y2(x)}\int_{z1(x,y)}^{z2(x,y)}f(z,y,x)dzdydx``
-See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available keyword arguments.
+
+Available integration methods:
+- `:cuhre`
+- `:divonne`
+- `:suave`
+- `:vegas`
+- `:hcubature`
+
+See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available keyword arguments fro the `:cuhre`, `:divonne`, `:suave` and `:vegas` methods.
+See [HCubature](https://github.com/stevengj/HCubature.jl) for all the available keywords for the `:hcubature` method.
 
 # Examples
 ```jldoctest
@@ -164,6 +200,8 @@ function tplquad(
         integrate = suave
     elseif method == :vegas
         integrate = vegas
+    elseif method == :hcubature
+        integrate = hcubature
     else
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
@@ -181,11 +219,21 @@ function tplquad(
     arg2(a, b, c) =
         ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
 
-    function integrand(x, f)
-        f[1] = arg2(x[1], x[2], x[3])
-    end
+    if method == :hcubature
+        function integrand(arr)
+            return arg2(arr[1], arr[2], arr[3])
+        end
 
-    result, err = integrate(integrand, 3, 1; kwargs...)
+        min_arr = [0, 0, 0]
+        max_arr = [1, 1, 1]
+        result, err = integrate(integrand, min_arr, max_arr; kwargs...)
+    else
+        function integrand2(x, f)
+            f[1] = arg2(x[1], x[2], x[3])
+        end
+
+        result, err = integrate(integrand2, 3, 1; kwargs...)
+    end
 
     if units == Unitful.NoUnits
         return result[1], err[1]
