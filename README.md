@@ -4,7 +4,7 @@
 
 # MultiQuad.jl
 **MultiQuad.jl** is a convenient interface to perform 1D, 2D and 3D numerical integrations.
-It uses [QuadGK](https://github.com/JuliaMath/QuadGK.jl) and [Cuba](https://github.com/giordano/Cuba.jl) as back-ends.
+It uses [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Cuba](https://github.com/giordano/Cuba.jl) and [HCubature](https://github.com/stevengj/HCubature.jl) as back-ends.
 
 # Usage
 
