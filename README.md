@@ -16,7 +16,7 @@ quad(arg::Function, x1, x2; method = :quadgk, kwargs...)
 
 It is possible to use `quad` to perform 1D integrals of the following kind:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{x1}^{x2}f(x)dx" title="\int_{x1}^{x2}f(x)dx" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{x1}^{x2}f(x)dx" title="\int_{x1}^{x2}f(x)dx" />
 
 The supported integration method are:
 
@@ -32,7 +32,7 @@ See [QuadGK](https://github.com/JuliaMath/QuadGK.jl) and [Cuba.jl](https://giord
 
 Compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{0}^{4}&space;x^2e^{-x}dx" title="\int_{0}^{4} x^2e^{-x}dx" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{0}^{4}&space;x^2e^{-x}dx" title="\int_{0}^{4} x^2e^{-x}dx" />
 
 ```julia
 using MultiQuad
@@ -47,7 +47,7 @@ It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{0&space;m}^{5&space;m}&space;x^2e^{-x}dx" title="\int_{0 m}^{5 m} x^2e^{-x}dx" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{0&space;m}^{5&space;m}&space;x^2e^{-x}dx" title="\int_{0 m}^{5 m} x^2e^{-x}dx" />
 
 ```julia
 using MultiQuad
@@ -65,7 +65,7 @@ dblquad(arg::Function, x1, x2, y1::Function, y2::Function; method = :cuhre, kwar
 
 It is possible to use `quad` to perform 2D integrals of the following kind:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dyf(y,x)" title="\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dyf(y,x)" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dyf(y,x)" title="\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dyf(y,x)" />
 
 The supported integration method are:
 
@@ -82,7 +82,7 @@ See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available 
 
 Compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_1^2&space;dx&space;\int_{0}^{x^2}dy&space;\sin(x)&space;y^2" title="\int_1^2 dx \int_{0}^{x^2}dy \sin(x) y^2" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_1^2&space;dx&space;\int_{0}^{x^2}dy&space;\sin(x)&space;y^2" title="\int_1^2 dx \int_{0}^{x^2}dy \sin(x) y^2" />
 
 ```julia
 using MultiQuad
@@ -97,7 +97,7 @@ It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{1m}^{2m}dy\int_{0m^2}^{x^2}&space;dx&space;\,&space;x&space;y^2" title="\int_{1m}^{2m}dy\int_{0m^2}^{x^2} dx \, x y^2" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{1m}^{2m}dy\int_{0m^2}^{x^2}&space;dx&space;\,&space;x&space;y^2" title="\int_{1m}^{2m}dy\int_{0m^2}^{x^2} dx \, x y^2" />
 
 ```julia
 using MultiQuad
@@ -115,7 +115,7 @@ tplquad(arg::Function, x1, x2, y1::Function, y2::Function, z1::Function, z2::Fun
 
 It is possible to use `quad` to perform 3D integrals of the following kind:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dy\int_{z1(x,y)}^{z2(x,y)}dz&space;\,&space;f(z,y,x)" title="\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dy\int_{z1(x,y)}^{z2(x,y)}dz \, f(z,y,x)" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dy\int_{z1(x,y)}^{z2(x,y)}dz&space;\,&space;f(z,y,x)" title="\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dy\int_{z1(x,y)}^{z2(x,y)}dz \, f(z,y,x)" />
 
 The supported integration method are:
 
@@ -132,7 +132,7 @@ See [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available 
 
 Compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{0}^{4}dx\int_{x}^{x^2}dy\int_{2}^{3x}dz\sin(z)&space;\,&space;x&space;\,&space;y" title="\int_{0}^{4}dx\int_{x}^{x^2}dy\int_{2}^{3x}dz\sin(z) \, x \, y" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{0}^{4}dx\int_{x}^{x^2}dy\int_{2}^{3x}dz\sin(z)&space;\,&space;x&space;\,&space;y" title="\int_{0}^{4}dx\int_{x}^{x^2}dy\int_{2}^{3x}dz\sin(z) \, x \, y" />
 
 ```julia
 using MultiQuad
@@ -147,7 +147,7 @@ It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{100}&space;\int_{0m}^{4m}dx\int_{0m^2}^{x^2}dy\int_{0}^{3}dz\sin(z)&space;\,&space;x&space;\,&space;y" title="\int_{0m}^{4m}dx\int_{0m^2}^{x^2}dy\int_{0}^{3}dz\sin(z) \, x \, y" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{0m}^{4m}dx\int_{0m^2}^{x^2}dy\int_{0}^{3}dz\sin(z)&space;\,&space;x&space;\,&space;y" title="\int_{0m}^{4m}dx\int_{0m^2}^{x^2}dy\int_{0}^{3}dz\sin(z) \, x \, y" />
 
 ```julia
 using MultiQuad
