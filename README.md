@@ -120,7 +120,7 @@ It is possible to compute integrals with unit of measurement using `Unitful`.
 
 For example, let's compute:
 
-<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{1m}^{2m}dy\int_{0m^2}^{x^2}&space;dx&space;\,&space;x&space;y^2" title="\int_{1m}^{2m}dy\int_{0m^2}^{x^2} dx \, x y^2" />
+<img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{1m}^{2m}dx\int_{0m^2}^{x^2}&space;dy&space;\,&space;x&space;y^2" title="\int_{1m}^{2m}dx\int_{0m^2}^{x^2} dy \, x y^2" />
 
 ```julia
 using MultiQuad
