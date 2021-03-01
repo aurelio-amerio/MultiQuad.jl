@@ -50,10 +50,10 @@ using MultiQuad, Test, Unitful
 
     @test quad(f, -1, 1, method=:gausslegendre, order=100000)[1] ≈ 2/5
 
-    @test quad(f, -1, 1, method=:gausshermite, order=10000)[1] ≈ 3(√π)/4
+    @test quad(f, method=:gausshermite, order=10000)[1] ≈ 3(√π)/4
 
-    @test quad(f, -1, 1, method=:gausslaguerre, order=10000)[1] ≈ 24
-    @test quad(f, -1, 1, method=:gausslaguerre, order=3, α=1.0)[1] ≈ 120
+    @test quad(f, method=:gausslaguerre, order=10000)[1] ≈ 24
+    @test quad(f, method=:gausslaguerre, order=3, α=1.0)[1] ≈ 120
 
     @test quad(f, -1, 1, method=:gausschebyshev, order=3)[1] ≈ 3π/8
     @test quad(f, -1, 1, method=:gausschebyshev, order=3, kind=1)[1] ≈ 3π/8
@@ -95,6 +95,17 @@ end
         rtol = rtol,
         method = :hcubature,
     )
+
+    @test dblquad(
+        (y,x)->x*y,
+        0,
+        2,
+        0,
+        3,
+        rtol = rtol,
+        method = :hcubature,
+    )[1] ≈ 9 
+
     @test isapprox(int1, res1, atol = err1)
     @test isapprox(int1b, res1, atol = err1b)
     @test typeof(dblquad(
@@ -231,6 +242,19 @@ end
         rtol = rtol,
         method = :suave,
     )[1]) == Float64
+
+    @test tplquad(
+        (z,y,x)->x*y*z,
+        0,
+        2,
+        0,
+        2,
+        0,
+        3,
+        rtol = rtol,
+        method = :hcubature,
+    )[1] ≈ 18 
+
     @test typeof(tplquad(
         func1,
         xmin,
