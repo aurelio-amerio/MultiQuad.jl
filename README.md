@@ -1,7 +1,8 @@
+# MultiQuad.jl
+
 [![CI](https://github.com/aurelio-amerio/MultiQuad.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/aurelio-amerio/MultiQuad.jl/actions/workflows/CI.yml)
 [![codecov.io](https://codecov.io/github/aurelio-amerio/MultiQuad.jl/coverage.svg?branch=master)](https://codecov.io/github/aurelio-amerio/MultiQuad.jl?branch=master)
 
-# MultiQuad.jl
 **MultiQuad.jl** is a convenient interface to perform 1D, 2D and 3D numerical integrations.
 It uses [QuadGK](https://github.com/JuliaMath/QuadGK.jl), [Cuba](https://github.com/giordano/Cuba.jl) and [HCubature](https://github.com/stevengj/HCubature.jl) as back-ends.
 
