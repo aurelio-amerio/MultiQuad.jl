@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/aurelio-amerio/MultiQuad.jl.svg?branch=master)](https://travis-ci.com/aurelio-amerio/MultiQuad.jl)
+[![CI](https://github.com/aurelio-amerio/MultiQuad.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/aurelio-amerio/MultiQuad.jl/actions/workflows/CI.yml)
 [![Coverage Status](https://coveralls.io/repos/github/aurelio-amerio/MultiQuad.jl/badge.svg?branch=master)](https://coveralls.io/github/aurelio-amerio/MultiQuad.jl?branch=master)
 [![codecov.io](https://codecov.io/github/aurelio-amerio/MultiQuad.jl/coverage.svg?branch=master)](https://codecov.io/github/aurelio-amerio/MultiQuad.jl?branch=master)
 
