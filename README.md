@@ -63,7 +63,7 @@ quad(func, 0, 4, method=:gausslegendre, order=10000, multithreading=true, verbos
 func(x) = x^2*exp(-x)
 quad(func, 0, Inf, method=:quadgk)[1]
 # gausslaguerre computes the integral of f(x)*exp(-x) from 0 to infinity
-quad(x -> x^4, method=:gausslaguerre, order=10000)[1] 
+quad(x -> x^2, method=:gausslaguerre, order=10000)[1] 
 ```
 
 ### Example 2
