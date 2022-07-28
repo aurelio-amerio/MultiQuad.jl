@@ -1,6 +1,6 @@
 module MultiQuad
 
-using QuadGK, Cuba, HCubature, Unitful, FastGaussQuadrature, LinearAlgebra, LRUCache
+using QuadGK, Cuba, HCubature, Unitful, FastGaussQuadrature, LinearAlgebra, LRUCache, Base.Threads, ProgressMeter
 
 export quad, dblquad, tplquad
 
@@ -65,9 +65,9 @@ function get_weights_fastgaussquadrature(order::Int, method::Symbol, optional::R
             return xw(order, kind)
         end
 
-    # elseif method == :gaussjacobi
-    #     xw = gaussjacobi
-    #     return xw(order)
+        # elseif method == :gaussjacobi
+        #     xw = gaussjacobi
+        #     return xw(order)
 
     elseif method == :gaussradau
         xw = gaussradau
@@ -76,19 +76,19 @@ function get_weights_fastgaussquadrature(order::Int, method::Symbol, optional::R
     elseif method == :gausslobatto
         xw = gausslobatto
         return xw(order)
-    
+
     else
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
     end
 
-    
+
 end
 
 const lru_xw_fastgaussquadrature = LRU{
     Tuple{Int,Symbol,Real},
     Tuple{Vector{Float64},Vector{Float64}},
-}(maxsize = Int(1e5))
+}(maxsize=Int(1e5))
 
 function get_weights_fastgaussquadrature_cached(order::Int, method::Symbol, optional::Real=NaN)
     get!(lru_xw_fastgaussquadrature, (order, method, optional)) do
@@ -96,8 +96,8 @@ function get_weights_fastgaussquadrature_cached(order::Int, method::Symbol, opti
     end
 end
 
-function _fastgaussquadrature_wrapper_1D(arg::Function, x1, x2; method::Symbol, order::Int, kwargs...)
-    if ! (method in [:gausslegendre, :gausschebyshev, :gaussradau, :gausslobatto])
+function _fastgaussquadrature_wrapper_1D(arg::Function, x1, x2; method::Symbol, order::Int, multithreading::Bool=true, verbose::Bool=false, kwargs...)
+    if !(method in [:gausslegendre, :gausschebyshev, :gaussradau, :gausslobatto])
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
     end
@@ -106,27 +106,50 @@ function _fastgaussquadrature_wrapper_1D(arg::Function, x1, x2; method::Symbol, 
         optional = kwargs[:α]
     elseif haskey(kwargs, :kind)
         optional = kwargs[:kind]
-    else 
+    else
         optional = NaN
     end
 
     x, w = get_weights_fastgaussquadrature_cached(order, method, optional)
 
-    b=x2
-    a=x1
+    b = x2
+    a = x1
 
-    b_a_2 = (b-a)/2
-    a_plus_b_2 = (a+b)/2
+    b_a_2 = (b - a) / 2
+    a_plus_b_2 = (a + b) / 2
 
-    arg_gauss(x) = arg(b_a_2*x + a_plus_b_2)
-    
-    integral = b_a_2 * dot(w, arg_gauss.(x))
+    arg_gauss(x) = arg(b_a_2 * x + a_plus_b_2)
+
+    if verbose
+        p = Progress(order)
+    end
+
+    if multithreading && order - 1 > nthreads() && nthreads() > 1
+        tmp = arg_gauss(x[1])
+        knots = zeros(order) * unit(tmp)
+        knots[1] = tmp
+        if verbose
+            next!(p)
+            @threads for i in 2:order
+                knots[i] = arg_gauss(x[i])
+                next!(p)
+            end
+        else
+            @threads for i in 2:order
+                knots[i] = arg_gauss(x[i])
+            end
+        end
+    else
+        knots = arg_gauss.(x)
+    end
+
+    integral = b_a_2 * dot(w, knots)
     return integral, NaN
 
 end
 
-function _fastgaussquadrature_wrapper_1D(arg::Function; method::Symbol, order::Int, kwargs...)
-    if ! (method in [:gausshermite , :gausslaguerre])
+function _fastgaussquadrature_wrapper_1D(arg::Function; method::Symbol, order::Int, multithreading::Bool=true, verbose::Bool=false, kwargs...)
+    if !(method in [:gausshermite, :gausslaguerre])
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
     end
@@ -135,19 +158,42 @@ function _fastgaussquadrature_wrapper_1D(arg::Function; method::Symbol, order::I
         optional = kwargs[:α]
     elseif haskey(kwargs, :kind)
         optional = kwargs[:kind]
-    else 
+    else
         optional = NaN
     end
 
     x, w = get_weights_fastgaussquadrature_cached(order, method, optional)
-    
-    integral = dot(w, arg.(x))
+
+    if verbose
+        p = Progress(order)
+    end
+
+    if multithreading && order - 1 > nthreads() && nthreads() > 1
+        tmp = arg(x[1])
+        knots = zeros(order) * unit(tmp)
+        knots[1] = tmp
+        if verbose
+            next!(p)
+            @threads for i in 2:order
+                knots[i] = arg(x[i])
+                next!(p)
+            end
+        else
+            @threads for i in 2:order
+                knots[i] = arg(x[i])
+            end
+        end
+    else
+        knots = arg.(x)
+    end
+
+    integral = dot(w, knots)
     return integral, NaN
 
 end
 
 @doc raw"""
-    quad(arg::Function, x1, x2[; method = :quadgk, oder=1000, kwargs...])
+    quad(arg::Function, x1, x2[; method = :quadgk, oder=1000, multithreading=true, kwargs...])
 
 Performs the integral ``\int_{x1}^{x2}f(x)dx``
 
@@ -197,14 +243,14 @@ func(x) = x^2
 integral, error = quad(func, 1u"m", 5u"m")
 ```
 """
-function quad(arg::Function, x1, x2; method::Symbol = :quadgk, order::Int=1000, kwargs...)
+function quad(arg::Function, x1, x2; method::Symbol=:quadgk, order::Int=1000, multithreading::Bool=true, verbose::Bool=false, kwargs...)
 
     if method in [:suave, :vegas]
         return _cuba_wrapper_1D(arg, x1, x2; method=method)
     elseif method == :quadgk
         return _quadgk_wrapper_1D(arg, x1, x2; kwargs...)
     elseif method in [:gausslegendre, :gausschebyshev, :gaussradau, :gausslobatto]
-        return _fastgaussquadrature_wrapper_1D(arg, x1, x2; method=method, order=order, kwargs...)    
+        return _fastgaussquadrature_wrapper_1D(arg, x1, x2; method=method, order=order, multithreading=multithreading, verbose=verbose, kwargs...)
     else
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
@@ -214,10 +260,10 @@ end
 @doc raw"""
     quad(arg::Function; method[, oder=1000, kwargs...])
 """
-function quad(arg::Function; method::Symbol, order::Int=1000, kwargs...)
+function quad(arg::Function; method::Symbol, order::Int=1000, multithreading::Bool=true, verbose::Bool=false, kwargs...)
 
-    if method in [:gausshermite , :gausslaguerre]
-        return _fastgaussquadrature_wrapper_1D(arg; method=method, order=order, kwargs...)    
+    if method in [:gausshermite, :gausslaguerre]
+        return _fastgaussquadrature_wrapper_1D(arg; method=method, order=order, multithreading=multithreading, verbose=verbose, kwargs...)
     else
         ex = ErrorException("Integration method $method is not supported!")
         throw(ex)
@@ -308,7 +354,7 @@ function _hcubature_wrapper_2D(arg::Function, x1, x2, y1::Function, y2::Function
     min_arr = [0, 0]
     max_arr = [1, 1]
     result, err = hcubature(integrand, min_arr, max_arr; kwargs...)
-    
+
 
     if units == Unitful.NoUnits
         return result[1], err[1]
@@ -332,7 +378,7 @@ function _hcubature_wrapper_2D(arg::Function, x1, x2, y1, y2; kwargs...)
     min_arr = [0, 0]
     max_arr = [1, 1]
     result, err = hcubature(integrand, min_arr, max_arr; kwargs...)
-    
+
 
     if units == Unitful.NoUnits
         return result[1], err[1]
@@ -377,8 +423,8 @@ function dblquad(
     x2,
     y1::Function,
     y2::Function;
-    method = :hcubature,
-    kwargs...,
+    method=:hcubature,
+    kwargs...
 )
 
     if method in [:cuhre, :divonne, :suave, :vegas]
@@ -397,8 +443,8 @@ function dblquad(
     x2,
     y1,
     y2;
-    method = :hcubature,
-    kwargs...,
+    method=:hcubature,
+    kwargs...
 )
 
     if method in [:cuhre, :divonne, :suave, :vegas]
@@ -411,7 +457,7 @@ function dblquad(
     end
 end
 
-function _cuba_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function, z1::Function, z2::Function;  method::Symbol, kwargs...)
+function _cuba_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function, z1::Function, z2::Function; method::Symbol, kwargs...)
     if method == :cuhre
         integrate = cuhre
     elseif method == :divonne
@@ -437,13 +483,13 @@ function _cuba_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function, z1:
     arg2(a, b, c) =
         ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
 
-    
+
     function integrand2(x, f)
         f[1] = arg2(x[1], x[2], x[3])
     end
 
     result, err = integrate(integrand2, 3, 1; kwargs...)
-    
+
 
     if units == Unitful.NoUnits
         return result[1], err[1]
@@ -452,7 +498,7 @@ function _cuba_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function, z1:
     end
 end
 
-function _cuba_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2;  method::Symbol, kwargs...)
+function _cuba_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2; method::Symbol, kwargs...)
     if method == :cuhre
         integrate = cuhre
     elseif method == :divonne
@@ -476,13 +522,13 @@ function _cuba_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2;  method::Symbol
     arg2(a, b, c) =
         ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
 
-    
+
     function integrand2(x, f)
         f[1] = arg2(x[1], x[2], x[3])
     end
 
     result, err = integrate(integrand2, 3, 1; kwargs...)
-    
+
 
     if units == Unitful.NoUnits
         return result[1], err[1]
@@ -505,7 +551,7 @@ function _hcubature_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function
     arg2(a, b, c) =
         ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
 
-    
+
     function integrand(arr)
         return arg2(arr[1], arr[2], arr[3])
     end
@@ -513,7 +559,7 @@ function _hcubature_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function
     min_arr = [0, 0, 0]
     max_arr = [1, 1, 1]
     result, err = hcubature(integrand, min_arr, max_arr; kwargs...)
-    
+
     if units == Unitful.NoUnits
         return result[1], err[1]
     else
@@ -533,7 +579,7 @@ function _hcubature_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2; kwargs...)
     arg2(a, b, c) =
         ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
 
-    
+
     function integrand(arr)
         return arg2(arr[1], arr[2], arr[3])
     end
@@ -541,7 +587,7 @@ function _hcubature_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2; kwargs...)
     min_arr = [0, 0, 0]
     max_arr = [1, 1, 1]
     result, err = hcubature(integrand, min_arr, max_arr; kwargs...)
-    
+
     if units == Unitful.NoUnits
         return result[1], err[1]
     else
@@ -587,12 +633,12 @@ function tplquad(
     y2::Function,
     z1::Function,
     z2::Function;
-    method = :hcubature,
-    kwargs...,
+    method=:hcubature,
+    kwargs...
 )
 
     if method in [:cuhre, :divonne, :suave, :vegas]
-        return _cuba_wrapper_3D(arg, x1, x2, y1, y2, z1, z2;  method=method, kwargs...)
+        return _cuba_wrapper_3D(arg, x1, x2, y1, y2, z1, z2; method=method, kwargs...)
 
     elseif method == :hcubature
         return _hcubature_wrapper_3D(arg, x1, x2, y1, y2, z1, z2; kwargs...)
@@ -611,12 +657,12 @@ function tplquad(
     y2,
     z1,
     z2;
-    method = :hcubature,
-    kwargs...,
+    method=:hcubature,
+    kwargs...
 )
 
     if method in [:cuhre, :divonne, :suave, :vegas]
-        return _cuba_wrapper_3D(arg, x1, x2, y1, y2, z1, z2;  method=method, kwargs...)
+        return _cuba_wrapper_3D(arg, x1, x2, y1, y2, z1, z2; method=method, kwargs...)
 
     elseif method == :hcubature
         return _hcubature_wrapper_3D(arg, x1, x2, y1, y2, z1, z2; kwargs...)

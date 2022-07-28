@@ -40,6 +40,8 @@ Please note that `:gausshermite` and `:gausslaguerre` are used to specific kind 
 
 For more informations on these integration techniques, please follow the official documentation [here](https://juliaapproximation.github.io/FastGaussQuadrature.jl/stable/gaussquadrature/).
 
+While using fixed order quadrature methods, it is possible to use multithreading to compute the 1D quadrature, by passing the keyword argument `mutithreading=true` to `quad`. If the forseen integration time is long, it is also possible to display a progress bar by passing the keyword argument `verbose=true`.
+
 See [QuadGK](https://github.com/JuliaMath/QuadGK.jl) and [Cuba.jl](https://giordano.github.io/Cuba.jl/stable/) for all the available keyword arguments.
 
 ### Example 1
@@ -54,6 +56,8 @@ using MultiQuad
 func(x) = x^2*exp(-x)
 quad(func, 0, 4) # equivalent to quad(func, 0, 4, method=:quadgk)
 quad(func, 0, 4, method=:gausslegendre, order=1000)
+# or add a progress bar and use multithreading
+quad(func, 0, 4, method=:gausslegendre, order=10000, multithreading=true, verbose=true)
 
 # for certain kinds of integrals with infinite bounds, it may be possible to use a specific integration routine
 func(x) = x^2*exp(-x)

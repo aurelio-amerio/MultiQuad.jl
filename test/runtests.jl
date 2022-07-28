@@ -49,6 +49,8 @@ using MultiQuad, Test, Unitful
     f(x) = x^4
 
     @test quad(f, -1, 1, method=:gausslegendre, order=100000)[1] ≈ 2/5
+    @test quad(f, -1, 1, method=:gausslegendre, order=100000, multithreading=true)[1] ≈ 2/5
+    @test quad(f, -1, 1, method=:gausslegendre, order=100000, multithreading=true, verbose=true)[1] ≈ 2/5
 
     @test quad(f, method=:gausshermite, order=10000)[1] ≈ 3(√π)/4
 
