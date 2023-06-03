@@ -21,7 +21,7 @@ function _cuba_wrapper_1D(arg::Function, x1, x2; method::Symbol, kwargs...)
 
     units = unit(arg(x1)) * unit(x1)
 
-    arg2(a) = ustrip(units, (x2 - x1) * arg((x2 - x1) * a + x1))::Float64
+    arg2(a) = ustrip(units, (x2 - x1) * arg((x2 - x1) * a + x1))
 
     function integrand(x, f)
         f[1] = arg2(x[1])
@@ -289,7 +289,7 @@ function _cuba_wrapper_2D(arg::Function, x1, x2, y1::Function, y2::Function; met
     arg1(a, x) = (y2(x) - y1(x)) * arg((y2(x) - y1(x)) * a + y1(x), x)
 
 
-    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))::Float64
+    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))
 
     function integrand2(x, f)
         f[1] = arg2(x[1], x[2])
@@ -322,7 +322,7 @@ function _cuba_wrapper_2D(arg::Function, x1, x2, y1, y2; method::Symbol, kwargs.
 
     arg1(a, x) = (y2 - y1) * arg((y2 - y1) * a + y1, x)
 
-    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))::Float64
+    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))
 
     function integrand2(x, f)
         f[1] = arg2(x[1], x[2])
@@ -344,7 +344,7 @@ function _hcubature_wrapper_2D(arg::Function, x1, x2, y1::Function, y2::Function
     arg1(a, x) = (y2(x) - y1(x)) * arg((y2(x) - y1(x)) * a + y1(x), x)
 
 
-    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))::Float64
+    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))
 
 
     function integrand(arr)
@@ -368,7 +368,7 @@ function _hcubature_wrapper_2D(arg::Function, x1, x2, y1, y2; kwargs...)
 
     arg1(a, x) = (y2 - y1) * arg((y2 - y1) * a + y1, x)
 
-    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))::Float64
+    arg2(a, b) = ustrip(units, (x2 - x1) * arg1(a, (x2 - x1) * b + x1))
 
 
     function integrand(arr)
@@ -481,7 +481,7 @@ function _cuba_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function, z1:
 
 
     arg2(a, b, c) =
-        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
+        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))
 
 
     function integrand2(x, f)
@@ -520,7 +520,7 @@ function _cuba_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2; method::Symbol,
 
 
     arg2(a, b, c) =
-        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
+        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))
 
 
     function integrand2(x, f)
@@ -549,7 +549,7 @@ function _hcubature_wrapper_3D(arg::Function, x1, x2, y1::Function, y2::Function
 
 
     arg2(a, b, c) =
-        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
+        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))
 
 
     function integrand(arr)
@@ -577,7 +577,7 @@ function _hcubature_wrapper_3D(arg::Function, x1, x2, y1, y2, z1, z2; kwargs...)
 
 
     arg2(a, b, c) =
-        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))::Float64
+        ustrip(units, (x2 - x1) * arg1(a, b, (x2 - x1) * c + x1))
 
 
     function integrand(arr)
