@@ -95,7 +95,7 @@ It is possible to use `dblquad` to perform 2D integrals of the following kind:
 
 The supported integration method are:
 
-- `hcubature` (default)
+- `:hcubature` (default)
 - `:cuhre` 
 - `:vegas`
 - `:suave`
@@ -158,7 +158,7 @@ It is possible to use `quad` to perform 3D integrals of the following kind:
 <img src="https://latex.codecogs.com/png.latex?\dpi{150}&space;\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dy\int_{z1(x,y)}^{z2(x,y)}dz&space;\,&space;f(z,y,x)" title="\int_{x1}^{x2}dx\int_{y1(x)}^{y2(x)}dy\int_{z1(x,y)}^{z2(x,y)}dz \, f(z,y,x)" />
 
 The supported integration method are:
-
+- `:hcubature`
 - `:cuhre` (default)
 - `:vegas`
 - `:suave`
